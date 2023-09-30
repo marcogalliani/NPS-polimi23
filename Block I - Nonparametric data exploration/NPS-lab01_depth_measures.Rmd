@@ -30,9 +30,10 @@ background-color: lightblue;
 
 *Disclaimer 1: The present material is an adaptation of the original R
 script prepared by Dr. Matteo Fontana for the a.y. 2020/2021
-Nonparametric statistics course, and later Prof. Andrea Cappozzo (a.y 2022-2023) While I acknowledge Matteo and Andrea for the
-(great) work done I hereby assume responsibility for any error that may
-be present in this document.*
+Nonparametric statistics course, and later Prof. Andrea Cappozzo (a.y
+2022-2023) While I acknowledge Matteo and Andrea for the (great) work
+done I hereby assume responsibility for any error that may be present in
+this document.*
 
 *Disclaimer 2: I will start from the assumption that you are all
 intermediate R users, if this is not the case please let me know, and we
@@ -77,14 +78,15 @@ plot(bin, main="Hexagonal Binning")
 ```
 
 ### Depth measures (multivariate)
+
 Now on depths: there are many possible packages hosted on CRAN to work
 with depths in a multivariate setting. We will hereafter use
 `DepthProc`, which is a good general purpose package and in addition it
 has good plotting capabilities. Even though not all depth measures
-introduced in class are directly available  (simplicial, Oja, convex hull peeling depth), it
-includes the two depth measures we will be using throughout this
-section, namely **Tukey** and **Mahalanobis** depths. Let us look at the
-help file for the `depth` function.
+introduced in class are directly available (simplicial, Oja, convex hull
+peeling depth), it includes the two depth measures we will be using
+throughout this section, namely **Tukey** and **Mahalanobis** depths.
+Let us look at the help file for the `depth` function.
 
 Calculating depth for a given dataset is immediately accomplished by
 typing
@@ -93,8 +95,9 @@ typing
 tukey_depth=depth(u=df_bivariate_exp,method='Tukey')
 ```
 
-It may be useful (spoiler alert, it will become apparent why when we study onparametric forecasting) to calculate the depth of a
-point relative to a sample. You can do it by:
+It may be useful (spoiler alert, it will become apparent why when we
+study onparametric forecasting) to calculate the depth of a point
+relative to a sample. You can do it by:
 
 ```{r}
 depth(u = c(0, 0), X = df_bivariate_exp, method = 'Tukey') 
@@ -112,9 +115,9 @@ Or, having already computed the Tukey depth for the entire sample:
 df_bivariate_exp[which.max(tukey_depth),]
 ```
 
-If you have the _luck_ of dealing with a bivariate dataset, you can easily
-visualize the depth surface in a very convenient way. `DepthProc` offers
-you two possible methods:
+If you have the *luck* of dealing with a bivariate dataset, you can
+easily visualize the depth surface in a very convenient way. `DepthProc`
+offers you two possible methods:
 
 ```{r}
 depthContour(df_bivariate_exp,depth_params = list(method='Tukey'))
@@ -133,14 +136,17 @@ depthPersp(df_bivariate_exp,depth_params = list(method='Tukey'),plot_method = 'r
 ```
 
 ##### Computational caveat
-Since the Tukey depth is obtained by counting points in the space of all hyperplanes(surfaces) in $\mathbb{R}^d$, when $d>2$, the computational burden increases. 
-Libraries usually recur to heuristic methods which lead to poor estimates (we will see this in the functional data depth measures lab)
+
+Since the Tukey depth is obtained by counting points in the space of all
+hyperplanes(surfaces) in $\mathbb{R}^d$, when $d>2$, the computational
+burden increases. Libraries usually recur to heuristic methods which
+lead to poor estimates (we will see this in the functional data depth
+measures lab)
+
 ```{r}
 a = depthPersp(df_bivariate_exp,depth_params = list(method='Tukey'))
 
 ```
-
-
 
 The very same analysis can be carried out by considering a different
 depth measure:
@@ -163,7 +169,7 @@ maha_depth_manual <- 1/(1+mahalanobis(x = df_bivariate_exp,center = sample_mean,
 ```
 
 And check that the obtained result is equal to the one obtained via the
-`depth` function  ( _beware of comparing floats_)
+`depth` function ( *beware of comparing floats*)
 
 ```{r, class.source="extracode"}
 all(abs(maha_depth-maha_depth_manual)<1e-15) # food for thought: sqrt(2) ^ 2 == 2?
@@ -183,10 +189,12 @@ depthPersp(df_bivariate_exp,depth_params = list(method='Mahalanobis'),plot_metho
 ```
 
 Please note that anything that comes out of `depthContour` or
-`depthPersp` is *NOT* a density: we are not doing density estimation here,
-we are performing data exploration by means of a nonparametric
-procedure.
-Let us plot the probability density function (NOT the depth function) of the bivariate exponential distribution we drew a sample from:
+`depthPersp` is *NOT* a density: we are not doing density estimation
+here, we are performing data exploration by means of a nonparametric
+procedure. Let us plot the probability density function (NOT the depth
+function) of the bivariate exponential distribution we drew a sample
+from:
+
 ```{r}
 PDF_3dPlot(rho = 0, Betax = 1, Betay = 1, title="PDF (NOT depth function) of the bivariate exponential distribution", zlabel="")
 ```
@@ -195,8 +203,8 @@ PDF_3dPlot(rho = 0, Betax = 1, Betay = 1, title="PDF (NOT depth function) of the
 depthPersp(cbind(rexp(1e4), rexp(1e4)),depth_params = list(method='Tukey'), plot_title="Tukey depth for the exp distribution")
 ```
 
-We notice that the tukey depth concentrates around the median, where as the exponential bivariate function increases as x,y go to 0. 
-
+We notice that the tukey depth concentrates around the median, where as
+the exponential bivariate function increases as x,y go to 0.
 
 ### Exercise
 
@@ -279,12 +287,12 @@ bagplot(df_contaminated_normals, factor = 3, show.whiskers = T)
 
 *Remember*:
 
-* The *bag* is composed of the deepest 50% of the data (i.e. $C_{.5}$)
-* The *fence* separates the outliers from the other observations
-* The *loop* contains data between the bag and the fence
-* Naturally, the median (i.e. the deepest datum) is inside the bag.
-If we check the help page for the `bagplot` function, we see that we
-have a lot of room for customization:
+-   The *bag* is composed of the deepest 50% of the data (i.e. $C_{.5}$)
+-   The *fence* separates the outliers from the other observations
+-   The *loop* contains data between the bag and the fence
+-   Naturally, the median (i.e. the deepest datum) is inside the bag. If
+    we check the help page for the `bagplot` function, we see that we
+    have a lot of room for customization:
 
 ```{r}
 aplpack::bagplot(df_contaminated_normals,show.whiskers = F,main="Bagplot")
