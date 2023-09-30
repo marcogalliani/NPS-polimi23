@@ -3,5 +3,8 @@
 .RData
 .Ruserdata
 .Rproj
+.html
+.log
+.tex
 
 .DS_Store
