@@ -4,9 +4,9 @@ date: 2023/09/26
 author: "Nonparametric statistics ay 2023/2024"
 output:
   
+  pdf_document: default
   html_document: 
     df_print: paged
-  pdf_document: default
   html_notebook: 
     df_print: paged
   word_document: default
@@ -14,7 +14,6 @@ editor_options:
   chunk_output_type: console
   markdown: 
     wrap: 72
-
 ---
 
 ```{r setup, include=FALSE}

@@ -1,7 +1,9 @@
 ---
 title: "TDE"
-output: html_document
-date: '2023-09-25'
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-09-25"
 ---
 
 ```{r setup, include=FALSE}
@@ -24,19 +26,124 @@ conclusion.
 Dr. Yorkhamikis has been long retired from the academy. Time has definitely passed since he left his Associate Professor job at a prestigious university in Milan to go back to his hometown in Greece, where he currently raises cattle. 
 He still keeps his quantitative approach though, and has instructed his employee to gather data relative to three key quantities concerning the milk of his cows (filename $milk_samples_1.Rds$) Assume observations to be independent between them.
 
-1. Dr. Yorkhamikis distrusts his employee, and is convinced there are observations that were not written down correctly and thus are not coherent with the true data. Devise a graphic method to retrieve such entries looking at the three measures relative to the milk and report the incoherent values.
-
-2. The distrust of the Dr. has been increasing a lot lately. He now also suspects that the second half of the observations were invented by his employee, who supposedly preferred to make the data up and have a nap. Dr. Yorkhamikis says this will be evident in the median of the PH of the second half of the observations, which should be quite different from the median of the industry standard which is $n$. Implement a pertinent (two-sided) statistical test relative to the median of the PH of the second half of the observations and write down your conclusions.
-
-3. Repeat the test for the .25th quantile, using for $H_0$ the .25th quantile equals the one of the first half  (first 160-something rows) of the population.
-
-
-
 ```{r}
 #setwd("Exam_style_exercises/") # Important to access files
 #load(file = "Exam_style_exercises/data/milk_samples_1.Rds") what happens if you run this line?
 df.latte = readRDS(file = "data/milk_samples_1.Rds")
 
+
 # set "global" variables
+```
+
+1. Dr. Yorkhamikis distrusts his employee, and is convinced there are observations that were not written down correctly and thus are not coherent with the true data. Devise a graphic method to retrieve such entries looking at the three measures relative to the milk and report the incoherent values.
+
+```{r}
+library(aplpack)
+bagplot_matrix <- bagplot.pairs(df.latte)
+```
+First pair:
+```{r}
+outlier_indices <- as.numeric(0)
+
+#selecting the desired comb
+df.first.comb <- df.latte[,c(1,2)]
+
+#computing the bagplot
+bagplot.first.comb <- bagplot(df.first.comb)
+
+#identifying the outliers and their indices
+outliers.first <- bagplot.first.comb$pxy.outlier
+indices.first <- which(apply(df.first.comb,1,function(x) all(x %in% outliers.first)))
+
+#adding to the outliers indices vector
+outlier_indices <- c(outlier_indices, outliers.first)
+```
+Second pair:
+```{r}
+#selecting the desired comb
+df.second.comb <- df.latte[,c(1,3)]
+
+#computing the bagplot
+bagplot.second.comb <- bagplot(df.second.comb)
+
+#identifying the outliers and their indices
+outliers.second <- bagplot.second.comb$pxy.outlier
+indices.second <- which(apply(df.second.comb,1,function(x) all(x %in% outliers.second)))
+
+#adding to the outliers indices vector
+outlier_indices <- c(outlier_indices, outliers.second)
+```
+Third pair
+```{r}
+#First pair
+outlier_indices <- as.numeric(0)
+
+#selecting the desired comb
+df.third.comb <- df.latte[,c(2,3)]
+
+#computing the bagplot
+bagplot.third.comb <- bagplot(df.third.comb)
+
+#identifying the outliers and their indices
+outliers.third <- bagplot.third.comb$pxy.outlier
+indices.third <- which(apply(df.third.comb,1,function(x) all(x %in% outliers.third)))
+
+#adding to the outliers indices vector
+outlier_indices <- c(outlier_indices, outliers.third)
+```
+
+2. The distrust of the Dr. has been increasing a lot lately. He now also suspects that the second half of the observations were invented by his employee, who supposedly preferred to make the data up and have a nap. Dr. Yorkhamikis says this will be evident in the median of the PH of the second half of the observations, which should be quite different from the median of the industry standard which is $n$. Implement a pertinent (two-sided) statistical test relative to the median of the PH of the second half of the observations and write down your conclusions.
+
+```{r}
+df.purged <- df.latte[-outlier_indices,]
+PH <- df.purged$Native_pH
+
+PH <- PH[ceiling(length(PH)/2):length(PH)]
+```
+
+Assumptions:
+- observations are i.i.d.
+- under H0, the count of points higher than 6 should be distributed as a Binomial(, 0.5)
+
+H0: median(PH) = 6
+H1: median(PH) != 6
+
+The test statistic is going to be 
+$$
+max(w,w*)
+$$
+w: count of values higher than 6
+
+```{r}
+median.H0 <- 6
+n <- length(PH)
+
+w <- sum(PH > median.H0)
+w.star <- max(c(w, n - w))
+
+plot(0:n, dbinom(0:n, n, 0.5))
+abline(v = c(w, n - w), col="red")
+p.value <- 2*(1 - pbinom(w.star-1,n,0.5)) 
+```
+
+
+3. Repeat the test for the .25th quantile, using for $H_0$ the .25th quantile equals the one of the first half  (first 160-something rows) of the population.
+
+```{r}
+PH.first.half <- df.purged$Native_pH[1:ceiling(length(df.purged$Native_pH)/2)]
+
+H0.value <- quantile(PH.first.half, 0.25)
+```
+
+H0: 25th_quantile(PH) = 6.59
+H1: 25th_quantile(PH) != 6.59
+
+```{r}
+n <- length(PH)
+
+w <- sum(PH > H0.value)
+
+plot(0:n, dbinom(0:n, n, 0.25))
+abline(v = c(w, n - w), col="red")
 ```
 
