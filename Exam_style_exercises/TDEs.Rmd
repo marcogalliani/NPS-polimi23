@@ -21,8 +21,8 @@ background-color: lightblue;
 
 *   All the numerical values required need to be put on an A4 sheet and uploaded, alongside the required plots.
 *   For all computations based on permutation/resampling, as well as split conformal, use B = 1000 replicates, and seed = 1991.
-*  Both for confidence and prediction intervals, as well as tests, set α = 0.05.
-*   When reporting a test result, please specify H0, H1 , the P−value and the corresponding conclusion.
+*  Both for confidence and prediction intervals, as well as tests, set $\alpha$ = 0.05.
+*   When reporting a test result, please specify H0, H1 , the P-value and the corresponding conclusion.
 *   When reporting confidence/prediction intervals, always provide upper and lower bound.
 
 ### Exercise 1
@@ -241,8 +241,10 @@ Assumptions:
 
 * Observations are i.i.d.
 * Under H0, the test statistic has the following property:
+
 $$
-w* \stackrel{H_0}{\sim} Binomial(N, 0.5)
+w* \stackrel{H_0}{\sim} Binomial(N, .25)
+
 $$
 
 
